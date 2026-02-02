@@ -16,3 +16,11 @@ serving_dir
 !week_6_stream_processing/avro_example/data/rides.csv
 *.parquet
 *.csv
+# Data Engineering Specifics
+*.duckdb
+*.db
+*.sqlite
+# In case you download raw data files locally
+*.csv
+*.parquet
+!**/rides.csv
