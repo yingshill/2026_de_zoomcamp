@@ -1,6 +1,33 @@
 1. 128.3MiB
 2. green_tripdata_2020-04.csv
+
 3. 24,648,499
+SELECT count(*) 
+FROM `lydia-zoomcamp.zoomcamp.yellow_tripdata`
+WHERE EXTRACT(YEAR FROM tpep_pickup_datetime) = 2020;
+
 4. 1,734,051
+SELECT count(*) 
+FROM `lydia-zoomcamp.zoomcamp.green_tripdata`
+WHERE EXTRACT(YEAR FROM lpep_pickup_datetime) = 2020;
+
 5. 1,925,152
+
+
 6. Add a timezone property set to America/New_York in the Schedule trigger configuration
+In 09_gcp_taxi_scheduled file:
+triggers:
+  - id: green_schedule
+    type: io.kestra.plugin.core.trigger.Schedule
+    cron: "0 9 1 * *"
+    timezone: "America/New_York"
+    inputs:
+      taxi: green
+
+
+  - id: yellow_schedule
+    type: io.kestra.plugin.core.trigger.Schedule
+    cron: "0 10 1 * *"
+    timezone: "America/New_York"
+    inputs:
+      taxi: yellow
