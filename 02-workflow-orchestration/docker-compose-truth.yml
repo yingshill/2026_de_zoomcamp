@@ -60,16 +60,9 @@ services:
    - kestra_data:/app/storage
    - /var/run/docker.sock:/var/run/docker.sock
    - /tmp/kestra-wd:/tmp/kestra-wd
-   - /Users/mac/Desktop/02-workflow-orchestration/02-workflow-orchestration/flows:/flows
   environment:
    KESTRA_SECRET_GEMINI_API_KEY: ${GEMINI_API_KEY}
    KESTRA_CONFIGURATION: |
-    micronaut:
-      io:
-        watch:
-          enabled: true
-          paths:
-            - /flows
     datasources:
       postgres:
         url: jdbc:postgresql://kestra_postgres:5432/kestra
@@ -81,9 +74,6 @@ services:
         basicAuth:
           username: "admin@kestra.io" # it must be a valid email address
           password: Admin1234!
-        watch:
-          paths:
-            - /flows
       repository:
         type: postgres
       storage:

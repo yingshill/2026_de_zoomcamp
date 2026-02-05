@@ -1,0 +1,7 @@
+id: testing_sync
+namespace: zoomcamp
+
+tasks:
+ - id: debug_secret
+   type: io.kestra.plugin.core.log.Log
+   message: "The secret is {{ secret('MYSECRET') }}"
