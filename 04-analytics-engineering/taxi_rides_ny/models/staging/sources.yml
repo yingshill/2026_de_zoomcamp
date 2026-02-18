@@ -102,3 +102,8 @@ sources:
             description: Improvement surcharge
           - name: total_amount
             description: Total amount charged
+
+      - name: fhv_tripdata
+        description: "Raw 2019 FHV (For-Hire Vehicle) trip data"
+        config:
+          loaded_at_field: pickup_datetime`
