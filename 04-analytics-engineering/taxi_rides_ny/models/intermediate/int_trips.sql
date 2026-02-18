@@ -46,7 +46,8 @@ cleaned_and_enriched as (
 
         -- Enrich with payment type description
         coalesce(u.payment_type, 0) as payment_type,
-        coalesce(pt.description, 'Unknown') as payment_type_description
+        -- coalesce(pt.description, 'Unknown') as payment_type_description
+        {{ get_payment_type_description('u.payment_type') }} as payment_type_description,
 
     from unioned u
     left join payment_types pt
