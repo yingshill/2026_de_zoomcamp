@@ -5,6 +5,8 @@ volumes:
   driver: local
  kestra_data:
   driver: local
+ kestra_tmp:
+  driver: local
 
 services:
  pgdatabase:
@@ -46,64 +48,46 @@ services:
    timeout: 10s
    retries: 10
 
- kestra:
-  image: kestra/kestra:v1.1
-  pull_policy: always
-  # Note that this setup with a root user is intended for development purpose.
-  # Our base image runs without root, but the Docker Compose implementation needs root to access the Docker socket
-  # To run Kestra in a rootless mode in production, see: https://kestra.io/docs/installation/podman-compose
-  user: "root"
-  command: server standalone
-  env_file:
-   - .env_encoded
-  volumes:
-   - kestra_data:/app/storage
-   - /var/run/docker.sock:/var/run/docker.sock
-   - /tmp/kestra-wd:/tmp/kestra-wd
-   - /Users/mac/Desktop/02-workflow-orchestration/02-workflow-orchestration/flows:/flows
-  environment:
-   KESTRA_SECRET_GEMINI_API_KEY: ${GEMINI_API_KEY}
-   KESTRA_CONFIGURATION: |
-    micronaut:
-      io:
-        watch:
-          enabled: true
-          paths:
-            - /flows
-    datasources:
-      postgres:
-        url: jdbc:postgresql://kestra_postgres:5432/kestra
-        driverClassName: org.postgresql.Driver
-        username: kestra
-        password: k3str4
-    kestra:
-      server:
-        basicAuth:
-          username: "admin@kestra.io" # it must be a valid email address
-          password: Admin1234!
-        watch:
-          paths:
-            - /flows
-      repository:
-        type: postgres
-      storage:
-        type: local
-        local:
-          basePath: "/app/storage"
-      queue:
-        type: postgres
-      ai:
-        type: gemini
-        gemini:
-            model-name: gemini-1.5-flash
-            api-key: "{{ secret('GEMINI_API_KEY') }}"
-      tasks:
-        tmpDir:
-          path: /tmp/kestra-wd/tmp
-      url: http://localhost:8080/
-  ports:
-   - "8080:8080"
-   - "8081:8081"
-  depends_on:
-   kestra_postgres:
-    condition: service_started
+  kestra:
+   image: kestra/kestra:v1.1
+   pull_policy: always
+   # Note that this setup with a root user is intended for development purpose.
+   # Our base image runs without root, but the Docker Compose implementation needs root to access the Docker socket
+   # To run Kestra in a rootless mode in production, see: https://kestra.io/docs/installation/podman-compose
+   user: "root"
+   command: server standalone
+   volumes:
+    - kestra_data:/app/storage
+    - /var/run/docker.sock:/var/run/docker.sock
+    - kestra_tmp:/tmp/kestra-wd
+   environment:
+    KESTRA_CONFIGURATION: |
+     datasources:
+       postgres:
+         url: jdbc:postgresql://kestra_postgres:5432/kestra
+         driverClassName: org.postgresql.Driver
+         username: kestra
+         password: k3str4
+     kestra:
+       server:
+         basicAuth:
+           username: "admin@kestra.io" # it must be a valid email address
+           password: Admin1234!
+       repository:
+         type: postgres
+       storage:
+         type: local
+         local:
+           basePath: "/app/storage"
+       queue:
+         type: postgres
+       tasks:
+         tmpDir:
+           path: /tmp/kestra-wd/tmp
+       url: http://localhost:8080/
+   ports:
+    - "8080:8080"
+    - "8081:8081"
+   depends_on:
+    kestra_postgres:
+     condition: service_started
